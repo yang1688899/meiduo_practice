@@ -17,9 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, register_converter
 
-from utils.converters import UsernameValidater
+from utils.converters import UsernameValidator
 
-register_converter(UsernameValidater, 'username_valid')
+register_converter(UsernameValidator, 'username_valid')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
