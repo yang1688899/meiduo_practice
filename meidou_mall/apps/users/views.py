@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -33,5 +34,7 @@ class RegisterView(View):
 
         user = User(username=username, password=make_password(password), mobile=mobile)
         user.save()
+
+        login(request, user)
 
         return JsonResponse({'code': 0, 'errmsg': 'ok'})

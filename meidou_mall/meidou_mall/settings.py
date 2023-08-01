@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',#跨域cors
 
     'apps.users',
+    'apps.captcha',
 ]
 
 MIDDLEWARE = [
