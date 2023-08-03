@@ -24,5 +24,7 @@ register_converter(UsernameValidator, 'username_valid')
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', include('apps.users.urls'))
+    path('', include('apps.users.urls')),
+    path('', include('apps.captcha.urls')),
+
 ]
