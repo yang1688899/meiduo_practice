@@ -1,7 +1,7 @@
 import json
 import re
 
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -86,6 +86,20 @@ class LoginView(View):
 
         return response
 
+
+
+class LogoutView(View):
+
+    def delete(self, request):
+
+        #删除session信息
+        logout(request)
+
+        response = JsonResponse({'code':0, 'errmsg':'ok'})
+
+        response.delete_cookie('username')
+
+        return response
 
 
 
