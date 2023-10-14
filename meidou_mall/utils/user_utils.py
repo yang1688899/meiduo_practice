@@ -1,6 +1,15 @@
 import re
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+
 from apps.users.models import User
+
+class UserLoginRequired(LoginRequiredMixin):
+
+    def handle_no_permission(self):
+        return JsonResponse({'code':400, 'errmsg':'请进行登录操作!!!'})
+
 
 
 def register_data_validate(username, password, password2, mobile, allow):

@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.views import View
 
 from apps.users.models import User
-from utils.user_utils import register_data_validate
+from utils.user_utils import register_data_validate, UserLoginRequired
 
 
 class UserCountView(View):
@@ -59,16 +59,16 @@ class LoginView(View):
         password = data_dict.get('password')
         remembered = data_dict.get('remembered')
 
-        #data validation
+        # data validation
 
-        if not all([username,password]):
-            return JsonResponse({'code':400, 'errmsg':'用户名或密码错误!!!'})
+        if not all([username, password]):
+            return JsonResponse({'code': 400, 'errmsg': '用户名或密码错误!!!'})
 
         if re.fullmatch('1[345789]\d{9}', username):
             User.USERNAME_FIELD = 'mobile'
         else:
             User.USERNAME_FIELD = 'username'
-        user = authenticate(username=username,password=password)
+        user = authenticate(username=username, password=password)
 
         if not user:
             return JsonResponse({'code': 400, 'errmsg': '用户名或密码错误!!!'})
@@ -81,25 +81,26 @@ class LoginView(View):
         else:
             request.session.set_expiry(0)
 
-        response = JsonResponse({'code':0, 'errmsg':'ok'})
+        response = JsonResponse({'code': 0, 'errmsg': 'ok'})
         response.set_cookie('username', username)
 
         return response
 
 
-
 class LogoutView(View):
 
     def delete(self, request):
-
-        #删除session信息
+        # 删除session信息
         logout(request)
 
-        response = JsonResponse({'code':0, 'errmsg':'ok'})
+        response = JsonResponse({'code': 0, 'errmsg': 'ok'})
 
         response.delete_cookie('username')
 
         return response
 
 
+class InfoView(UserLoginRequired, View):
 
+    def get(self, request):
+        return JsonResponse({'code': 0, 'errmsg': 'ok'})
