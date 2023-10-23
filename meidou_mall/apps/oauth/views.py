@@ -41,15 +41,15 @@ class QQOAuthView(View):
         try:
             user = OAuthQQUser.objects.get(openid=opid)
         except Exception:
-            return JsonResponse({'code':400, 'access_token':token})
+            return JsonResponse({'code': 400, 'access_token': token})
         else:
             login(user)
 
-            response = JsonResponse({'code':0, 'errmsg':'ok' })
+            response = JsonResponse({'code': 0, 'errmsg': 'ok'})
 
             response.set_cookie('username', user.username)
 
-    def post(self,request):
+    def post(self, request):
 
         data_dict = json.loads(request.body.decode())
 
@@ -72,16 +72,14 @@ class QQOAuthView(View):
 
         else:
             if not user.check_password(password):
-                JsonResponse({'code':400, 'errmsg':'账号或密码错误'})
+                JsonResponse({'code': 400, 'errmsg': '账号或密码错误'})
 
         OAuthQQUser.objects.create(user=user, openid=openid)
 
-        login(request,user)
+        login(request, user)
 
-        response = JsonResponse({'code':0, 'errmsg':'ok'})
+        response = JsonResponse({'code': 0, 'errmsg': 'ok'})
 
         response.set_cookie('username', user.username)
 
         return response
-
-
