@@ -26,5 +26,6 @@ urlpatterns = [
 
     path('', include('apps.users.urls')),
     path('', include('apps.captcha.urls')),
+    path('', include('apps.oauth.urls')),
 
 ]
