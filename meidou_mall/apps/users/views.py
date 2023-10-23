@@ -103,4 +103,17 @@ class LogoutView(View):
 class InfoView(UserLoginRequired, View):
 
     def get(self, request):
-        return JsonResponse({'code': 0, 'errmsg': 'ok'})
+        user = request.user
+
+        if user:
+            info_data = {
+                'username': user.username,
+                'mobile': user.mobile,
+                'email': user.email,
+                'email_active': user.email_active
+            }
+
+            return JsonResponse({'code': 0, 'errmsg': 'ok', 'info_data':info_data})
+
+        else:
+            return JsonResponse({'code': 400, 'errmsg': '请进行登录'})

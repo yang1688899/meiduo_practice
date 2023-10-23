@@ -7,6 +7,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     mobile = models.CharField(max_length=11, unique=True)
+    email_active = models.BooleanField(default=False)
 
 
     class Meta:

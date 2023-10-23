@@ -41,15 +41,18 @@ class QQOAuthView(View):
         opid = oauth.get_open_id(token)
 
         try:
-            user = OAuthQQUser.objects.get(openid=opid)
-        except Exception:
+            auth_user = OAuthQQUser.objects.get(openid=opid)
+        except OAuthQQUser.DoesNotExist:
             return JsonResponse({'code': 400, 'access_token': encode_token(token)})
         else:
-            login(user)
+            user = auth_user.user
+            login(request, user)
 
             response = JsonResponse({'code': 0, 'errmsg': 'ok'})
 
             response.set_cookie('username', user.username)
+
+            return response
 
     def post(self, request):
 
