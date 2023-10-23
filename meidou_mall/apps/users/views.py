@@ -9,6 +9,7 @@ from django.views import View
 
 from apps.users.models import User
 from utils.user_utils import register_data_validate, UserLoginRequired
+from utils.token_serializer import encode_token, decode_token
 
 
 class UserCountView(View):
@@ -113,7 +114,39 @@ class InfoView(UserLoginRequired, View):
                 'email_active': user.email_active
             }
 
-            return JsonResponse({'code': 0, 'errmsg': 'ok', 'info_data':info_data})
+            return JsonResponse({'code': 0, 'errmsg': 'ok', 'info_data': info_data})
 
         else:
             return JsonResponse({'code': 400, 'errmsg': '请进行登录'})
+
+
+from django.core.mail import send_mail
+class EmailView(UserLoginRequired, View):
+
+    def put(self, request):
+        data = json.loads(request.body)
+
+        email = data.get('email')
+
+        if not re.fullmatch('[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}', email):
+            return JsonResponse({'code': 400, 'errmsg': '邮箱格式错误'})
+
+        user = request.user
+        user.email = email
+
+        verify_url = "http://www.meiduo.site:8080?token=%s"%encode_token(user.id)
+
+        EMAIL_FROM = '美多商城<qi_rui_hua@163.com>'
+        subjest = '邮箱验证'
+        html_message = '<p>尊敬的用户您好！</p>' \
+                       '<p>感谢您使用美多商城。</p>' \
+                       '<p>您的邮箱为：%s 。请点击此链接激活您的邮箱：</p>' \
+                       '<p><a href="%s">%s<a></p>' % (email, verify_url, verify_url)
+
+        send_mail(from_email=EMAIL_FROM,message='', html_message=html_message, subject=subjest,recipient_list=[email])
+
+
+        user.save()
+
+        return JsonResponse({'code': 0, 'errmsg': 'ok'})
+
