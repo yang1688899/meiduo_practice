@@ -10,6 +10,8 @@ from django.http import HttpResponse, JsonResponse
 from apps.oauth.models import OAuthQQUser
 from apps.users.models import User
 from meidou_mall import settings
+from utils.token_serializer import encode_token, decode_token
+
 
 
 class QQLoginView(View):
@@ -41,7 +43,7 @@ class QQOAuthView(View):
         try:
             user = OAuthQQUser.objects.get(openid=opid)
         except Exception:
-            return JsonResponse({'code': 400, 'access_token': token})
+            return JsonResponse({'code': 400, 'access_token': encode_token(token)})
         else:
             login(user)
 
@@ -56,6 +58,7 @@ class QQOAuthView(View):
         mobile = data_dict.get('mobile')
         password = data_dict.get('password')
         access_token = data_dict.get('access_token')
+        access_token = decode_token(access_token)
 
         oauth = OAuthQQ(client_id=settings.QQ_CLIENT_ID,
                         client_secret=settings.QQ_CLIENT_SECRET,
